@@ -11,6 +11,7 @@
       systems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin"];
       perSystem = {pkgs, ...}: {
         packages.harpoon-bufferline = pkgs.callPackage ./pkgs/harpoon-bufferline.nix {};
+        packages.xkbswitch = pkgs.callPackage ./pkgs/xkbswitch.nix {};
 	packages.userver = pkgs.callPackage ./pkgs/userver {};
       };
     };
