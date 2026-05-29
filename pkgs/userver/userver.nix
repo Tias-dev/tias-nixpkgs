@@ -1,10 +1,9 @@
 {
-pkgs,
-callPackage,
-stdenv,
-fetchFromGitHub,
-}:
-let 
+  pkgs,
+  callPackage,
+  stdenv,
+  fetchFromGitHub,
+}: let
   customPythonPackages = callPackage ./pythonLibs.nix {};
 in
   stdenv.mkDerivation {
@@ -26,15 +25,14 @@ in
       "-DUSERVER_FEATURE_STACKTRACE=OFF"
     ];
 
-
-    buildInputs = with pkgs; [
+    propagatedNativeBuildInputs = with pkgs; [
       cmake
+      boost186
       yaml-cpp
       cryptopp
       fmt_11
       cctz
       jemalloc
-      boost186
       re2
       openssl_3_6
       gtest
@@ -46,18 +44,22 @@ in
       c-ares
       curl
       clang-tools
-      (python313.withPackages (
-	ps: with ps; with customPythonPackages; [
-	  pip
-	  virtualenv
-	  jinja2
-	  pydantic
-	  wheel
-	  packaging
-	  yataxi-testsuite
-	  transliterate
-	]
-      ))
       gbenchmark
+    ];
+    propagatedBuildInputs = with pkgs; [
+      (python313.withPackages (
+        ps:
+          with ps;
+          with customPythonPackages; [
+            pip
+            virtualenv
+            jinja2
+            pydantic
+            wheel
+            packaging
+            yataxi-testsuite
+            transliterate
+          ]
+      ))
     ];
   }
