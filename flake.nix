@@ -13,6 +13,10 @@
         packages.harpoon-bufferline = pkgs.callPackage ./pkgs/harpoon-bufferline.nix {};
         packages.xkbswitch = pkgs.callPackage ./pkgs/xkbswitch.nix {};
 	packages.userver = pkgs.callPackage ./pkgs/userver {};
+
+	devShells.default = pkgs.mkShell {
+	  packages = with pkgs; [nix-output-monitor];
+	};
       };
     };
 }
