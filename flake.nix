@@ -18,7 +18,7 @@
       }: {
         packages.harpoon-bufferline = pkgs.callPackage ./pkgs/harpoon-bufferline.nix {};
         packages.xkbswitch = pkgs.callPackage ./pkgs/xkbswitch.nix {};
-        packages.userver = pkgs.callPackage ./pkgs/userver {inherit inputs'; };
+        packages.userver = pkgs.callPackage ./pkgs/userver {inherit inputs';};
       };
     };
 }

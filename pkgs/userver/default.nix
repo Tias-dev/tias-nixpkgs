@@ -16,6 +16,7 @@
   withSQLite ? false,
   withEasy ? false,
   withMultiIndexLRU ? false,
+  withMySQL ? false,
 }: let
   clickhouse-cpp = callPackage ./clickhouse-cpp.nix {};
   new-pkgs = inputs'.new-nixpkgs.legacyPackages;
@@ -34,6 +35,9 @@ in
       rev = "v3.0";
       sha256 = "uI91z2pSIoc3Az/N4dwsmkFb7gcFGKx39cHmkPIhpOE=";
     };
+    patches = [
+      ./mysql.patch
+    ];
 
     cmakeFlags =
       with updatedPackages;
@@ -71,8 +75,7 @@ in
           "-DUSERVER_PG_LIBRARY_DIR=${libpq.dev}/lib"
         ])
         ++ (lib.optional (withAllComponents || withEasy) "-DUSERVER_FEATURE_EASY=ON")
-      #  # mysql disable for now via libmariadb library can't be paired with cmake but it is installed via mariadb-connector-c
-      # "-DUSERVER_FEATURE_MYSQL=ON"
+        ++ (lib.optionals (withAllComponents || withMySQL) ["-DUSERVER_FEATURE_MYSQL=ON" "-DPATHED_LIBMARIADB_PATH=${pkgs.mariadb-connector-c}/lib/mariadb"])
       # # rocks disable for now via rocksdb have uring::uring target in interface but not this target not found
       # "-DUSERVER_FEATURE_ROCKS=ON"
       # # ydb disable for now due to i don't work on its building for a while
@@ -88,13 +91,23 @@ in
       # # odbc disable for now via it requires sql.h header which is not found
       # "-DUSERVER_FEATURE_ODBC=ON"
       ;
+    propagatedNativeBuildInputs = with pkgs; [
+      cmake
+      pkg-config
+    ];
 
+    # fix mariadb.rc -> libmariadb.rc link for pkg-config
+    preConfigure = (
+      lib.optionalString withMySQL ''
+                mkdir -p $out/mysql-tmp/pkgconfig
+                ln -s ${pkgs.mariadb-connector-c.dev}/lib/pkgconfig/libmariadb.pc $out/mysql-tmp/pkgconfig/mariadb.pc
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$out/mysql-tmp/pkgconfig
+      ''
+    );
+    postConfigure = lib.optionalString withMySQL "rm -rf $out/mysql-tmp";
 
     propagatedBuildInputs = with pkgs;
       [
-        cmake
-        pkg-config
-
         git
         openssl_3_6
         boost186
@@ -182,5 +195,6 @@ in
       ++ (lib.optional (withAllComponents || withRabbitMQ) libamqpcpp)
       ++ (lib.optional (withAllComponents || withSQLite) sqlite)
       ++ (lib.optional (withAllComponents || withMongoDB) mongoc)
-      ++ (lib.optionals (withAllComponents || withPostgresql) [openldap updatedPackages.libpq.dev libkrb5.dev ]);
+      ++ (lib.optionals (withAllComponents || withPostgresql) [openldap updatedPackages.libpq.dev libkrb5.dev])
+      ++ (lib.optionals (withAllComponents || withMySQL) [mariadb-connector-c mariadb-connector-c.dev]);
   }

@@ -1,0 +1,13 @@
+diff --git a/cmake/modules/Findlibmariadb.cmake b/cmake/modules/Findlibmariadb.cmake
+index 821ce06..c969c31 100644
+--- a/cmake/modules/Findlibmariadb.cmake
++++ b/cmake/modules/Findlibmariadb.cmake
+@@ -9,7 +9,7 @@ _userver_module_begin(
+ 
+ _userver_module_find_include(NAMES mysql.h PATH_SUFFIXES mariadb mysql)
+ 
+-_userver_module_find_library(NAMES mariadb)
++_userver_module_find_library(NAMES mariadb PATHS ${PATHED_LIBMARIADB_PATH})
+ 
+ _userver_module_end()
+ 
