@@ -1,6 +1,12 @@
-{pkgs, ...}:
-let
-  clickhouse-cpp = pkgs.callPackage ./clickhouse-cpp.nix {}; 
-  # amqp-cpp = pkgs.callPackage ./amqp-cpp.nix {}; 
+{
+  pkgs,
+  inputs',
+  ...
+}: let
+  clickhouse-cpp = pkgs.callPackage ./clickhouse-cpp.nix {};
+  # amqp-cpp = pkgs.callPackage ./amqp-cpp.nix {};
 in
-pkgs.callPackage ./userver.nix {inherit clickhouse-cpp;}
+  pkgs.callPackage ./userver.nix {
+    inherit clickhouse-cpp;
+    new-pkgs = inputs'.new-nixpkgs.legacyPackages;
+  }

@@ -1,11 +1,16 @@
 {
   pkgs,
+  new-pkgs,
   callPackage,
   stdenv,
   fetchFromGitHub,
   clickhouse-cpp,
 }: let
   customPythonPackages = callPackage ./pythonLibs.nix {};
+  updatedPackages = {
+    postgresql = new-pkgs.postgresql.overrideAttrs (final: prev: {dontDisableStatic = true;});
+    libpq = new-pkgs.libpq.overrideAttrs (final: prev: {dontDisableStatic = true;});
+  };
 in
   stdenv.mkDerivation {
     pname = "userver-lib";
@@ -17,7 +22,7 @@ in
       sha256 = "uI91z2pSIoc3Az/N4dwsmkFb7gcFGKx39cHmkPIhpOE=";
     };
 
-    cmakeFlags = [
+    cmakeFlags = with updatedPackages; [
       # Required
       "-DUSERVER_INSTALL=ON"
 
@@ -41,20 +46,19 @@ in
       "-DUSERVER_FEATURE_KAFKA=ON"
       "-DUSERVER_FEATURE_RABBITMQ=ON"
       "-DUSERVER_FEATURE_SQLITE=ON"
-      "-DUSERVER_FEATURE_ODBC=ON"
       "-DUSERVER_FEATURE_MULTI_INDEX_LRU=ON"
-      
-
 
       # # build all components
       # "-DUSERVER_BUILD_ALL_COMPONENTS=ON"
-      #
-      # # mongodb disable for now via bson_INCLUDE_DIRS not found in configure phase
-      # "-DUSERVER_FEATURE_MONGODB=ON"
-      #
-      # # postgresql disable for now via Imported target "PostgreSQLInternal" includes non-existent path
-      # "-DUSERVER_FEATURE_POSTGRESQL=ON"
+
+      "-DUSERVER_FEATURE_MONGODB=ON"
+
+      "-DUSERVER_FEATURE_POSTGRESQL=ON"
       # "-DUSERVER_FEATURE_EASY=ON" # requires postgresql
+      "-DUSERVER_PG_SERVER_INCLUDE_DIR=${libpq.dev}/include/postgresql/server"
+      "-DUSERVER_PG_SERVER_LIBRARY_DIR=${libpq.dev}/lib"
+      "-DUSERVER_PG_INCLUDE_DIR=${libpq.dev}/include"
+      "-DUSERVER_PG_LIBRARY_DIR=${libpq.dev}/lib"
 
       #  # mysql disable for now via libmariadb library can't be paired with cmake but it is installed via mariadb-connector-c
       # "-DUSERVER_FEATURE_MYSQL=ON"
@@ -73,6 +77,9 @@ in
       # "-DUSERVER_FEATURE_GRPC_REFLECTION=ON"
       # # s3 grpc client disabled as it is require grpc to work
       # "-DUSERVER_FEATURE_S3API=ON"
+
+      # # odbc disable for now via it requires sql.h header which is not found
+      # "-DUSERVER_FEATURE_ODBC=ON"
     ];
 
     propagatedNativeBuildInputs = with pkgs; [
@@ -103,7 +110,7 @@ in
 
       # clickhouse
       clickhouse-cpp
-      
+
       # kafka
       lz4
       cyrus_sasl
@@ -125,23 +132,23 @@ in
       # # mysql
       # mariadb-connector-c
 
-      # # mongodb
-      # mongoc
-      #
-      # # postgresql
-      # openldap
+      # mongodb
+      mongoc
+
       # postgresql
-      #
-      
+      openldap
+      updatedPackages.libpq.dev
+      libkrb5.dev
+
       # # grpc
       # protobuf
       # grpc
     ];
 
-    propagatedBuildInputs = with pkgs; [
-      (python313.withPackages (
-        ps:
-          with ps;
+    propagatedBuildInputs = [
+      (pkgs.python313.withPackages
+        (pythonPkgs:
+          with pythonPkgs;
           with customPythonPackages; [
             pip
             virtualenv
@@ -168,11 +175,11 @@ in
             pytest
             zstd
             yandex-taxi-testsuite
-	    clickhouse-driver
-	    python-redis
-	    pymysql
-	    aio-pika
-	    aiokafka
+            clickhouse-driver
+            python-redis
+            pymysql
+            aio-pika
+            aiokafka
 
             # mongodb
             pymongo
@@ -199,7 +206,6 @@ in
 
             wheel
             packaging
-          ]
-      ))
+          ]))
     ];
   }
