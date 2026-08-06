@@ -1,0 +1,29 @@
+diff --git a/cmake/SetupGrpc.cmake b/cmake/SetupGrpc.cmake
+index 3982eb1..b437dc3 100644
+--- a/cmake/SetupGrpc.cmake
++++ b/cmake/SetupGrpc.cmake
+@@ -49,11 +49,6 @@ macro(try_find_system_grpc)
+ endmacro()
+ 
+ if(NOT USERVER_FORCE_DOWNLOAD_GRPC)
+-    try_find_cmake_grpc()
+-    if(gRPC_FOUND)
+-        return()
+-    endif()
+-
+     try_find_system_grpc()
+     if(UserverGrpc_FOUND)
+         return()
+diff --git a/grpc/CMakeLists.txt b/grpc/CMakeLists.txt
+index 0da2544..04cec64 100644
+--- a/grpc/CMakeLists.txt
++++ b/grpc/CMakeLists.txt
+@@ -127,6 +127,7 @@ target_link_libraries(${PROJECT_NAME}-internal PUBLIC ${PROJECT_NAME}-deps)
+ _userver_install_targets(COMPONENT grpc TARGETS ${PROJECT_NAME}-internal ${PROJECT_NAME}-deps)
+ 
+ if(Protobuf_VERSION VERSION_GREATER_EQUAL 4.23.0)
++    find_package(absl CONFIG REQUIRED)
+     target_link_libraries(
+         ${PROJECT_NAME}-internal PUBLIC absl::log_globals absl::log_internal_globals absl::log_internal_check_op
+     )
+

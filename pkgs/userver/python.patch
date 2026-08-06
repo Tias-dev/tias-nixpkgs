@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5099af5..1d3fdf7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,7 @@
+ cmake_minimum_required(VERSION 3.14...4.0)
++set(USERVER_PIP_USE_SYSTEM_PACKAGES ON CACHE INTERNAL "" FORCE)
++set(USERVER_PIP_OPTIONS --no-index CACHE INTERNAL "" FORCE)
++
+ if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0")
+     if(NOT DEFINED $CACHE{CMAKE_POLICY_VERSION_MINIMUM})
+         set(CMAKE_POLICY_VERSION_MINIMUM
+

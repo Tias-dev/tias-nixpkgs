@@ -22,8 +22,14 @@
   new-pkgs = inputs'.new-nixpkgs.legacyPackages;
   customPythonPackages = callPackage ./pythonLibs.nix {};
   updatedPackages = {
-    postgresql = new-pkgs.postgresql.overrideAttrs (final: prev: {dontDisableStatic = true;});
-    libpq = new-pkgs.libpq.overrideAttrs (final: prev: {dontDisableStatic = true;});
+    postgresql = new-pkgs.postgresql.overrideAttrs (_: _: {dontDisableStatic = true;});
+    libpq = new-pkgs.libpq.overrideAttrs (_: _: {dontDisableStatic = true;});
+  };
+  api-common-protos = pkgs.fetchFromGitHub {
+    owner = "googleapis";
+    repo = "api-common-protos";
+    rev = "3332dec527759859840a3a2ff108c67a54708130";
+    hash = "sha256-GeWNBzT0lRncT+fz+TlEfp+J4FqmzuHwVhYxMN6e3FU";
   };
 in
   stdenv.mkDerivation {
@@ -37,6 +43,12 @@ in
     };
     patches = [
       ./mysql.patch
+
+      # Force virtualenv to use packages from buildInputs
+      # as we dont need(and we can't) to download smth
+      ./python.patch
+
+      ./grpc.patch
     ];
 
     cmakeFlags =
@@ -50,14 +62,12 @@ in
           "-DUSERVER_DOWNLOAD_PACKAGES=OFF"
           "-DUSERVER_CHECK_PACKAGE_VERSIONS=0"
 
-          # Force virtualenv to use packages from buildInputs
-          # so we dont need(and we can't) to download smth
-          "-DUSERVER_PIP_USE_SYSTEM_PACKAGES=ON"
-          "-DUSERVER_PIP_OPTIONS=--no-index"
-
           # boost_stacktrace_backtrace is not provided by boost186 build input
           # TODO: create custom boost package with boost_stacktrace_backtrace support
           "-DUSERVER_FEATURE_STACKTRACE=OFF"
+
+          "-DUSERVER_FEATURE_GRPC=ON" # TODO: add grpc including by param
+          "-DUSERVER_GOOGLE_COMMON_PROTOS=${api-common-protos}"
         ]
         # enabled features
         ++ (lib.optional (withAllComponents || withRedis) "-DUSERVER_FEATURE_REDIS=ON")
@@ -81,7 +91,6 @@ in
       # # ydb disable for now due to i don't work on its building for a while
       # "-DUSERVER_FEATURE_YDB=ON"
       # # grpc disable for now via grpc package export upb related targets but not define it
-      # "-DUSERVER_FEATURE_GRPC=ON"
       # # otlp disabled as it is require grpc to work
       # "-DUSERVER_FEATURE_OTLP=ON"
       # # grpc-reflection disabled as it is require grpc to work
@@ -126,6 +135,10 @@ in
         c-ares
         curl
         clang-tools
+
+        protobuf
+        grpc
+        abseil-cpp
 
         (pkgs.python313.withPackages
           (pythonPkgs:
