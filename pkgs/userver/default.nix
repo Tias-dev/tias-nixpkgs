@@ -17,6 +17,7 @@
   withEasy ? false,
   withMultiIndexLRU ? false,
   withMySQL ? false,
+  withGrpc ? false,
 }: let
   clickhouse-cpp = callPackage ./clickhouse-cpp.nix {};
   new-pkgs = inputs'.new-nixpkgs.legacyPackages;
@@ -31,6 +32,18 @@
     rev = "3332dec527759859840a3a2ff108c67a54708130";
     hash = "sha256-GeWNBzT0lRncT+fz+TlEfp+J4FqmzuHwVhYxMN6e3FU";
   };
+  grpc-api-common-proto-patch = pkgs.writeText "api-common-protos.patch" ''
+    diff --git a/CMakeLists.txt b/CMakeLists.txt
+    index 5099af5..e547775 100644
+    --- a/CMakeLists.txt
+    +++ b/CMakeLists.txt
+    @@ -1,4 +1,5 @@
+      cmake_minimum_required(VERSION 3.14...4.0)
+    +set(USERVER_GOOGLE_COMMON_PROTOS "${api-common-protos}" CACHE INTERNAL "" FORCE)
+      if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0")
+          if(NOT DEFINED $CACHE{CMAKE_POLICY_VERSION_MINIMUM})
+              set(CMAKE_POLICY_VERSION_MINIMUM
+  '';
 in
   stdenv.mkDerivation {
     pname = "userver-lib";
@@ -41,6 +54,7 @@ in
       rev = "v3.0";
       sha256 = "uI91z2pSIoc3Az/N4dwsmkFb7gcFGKx39cHmkPIhpOE=";
     };
+
     patches = [
       ./mysql.patch
 
@@ -49,6 +63,7 @@ in
       ./python.patch
 
       ./grpc.patch
+      "${grpc-api-common-proto-patch}"
     ];
 
     cmakeFlags =
@@ -65,9 +80,6 @@ in
           # boost_stacktrace_backtrace is not provided by boost186 build input
           # TODO: create custom boost package with boost_stacktrace_backtrace support
           "-DUSERVER_FEATURE_STACKTRACE=OFF"
-
-          "-DUSERVER_FEATURE_GRPC=ON" # TODO: add grpc including by param
-          "-DUSERVER_GOOGLE_COMMON_PROTOS=${api-common-protos}"
         ]
         # enabled features
         ++ (lib.optional (withAllComponents || withRedis) "-DUSERVER_FEATURE_REDIS=ON")
@@ -86,6 +98,7 @@ in
         ])
         ++ (lib.optional (withAllComponents || withEasy) "-DUSERVER_FEATURE_EASY=ON")
         ++ (lib.optionals (withAllComponents || withMySQL) ["-DUSERVER_FEATURE_MYSQL=ON" "-DPATHED_LIBMARIADB_PATH=${pkgs.mariadb-connector-c}/lib/mariadb"])
+        ++ (lib.optionals (withAllComponents || withGrpc) ["-DUSERVER_FEATURE_GRPC=ON"])
       # # rocks disable for now via rocksdb have uring::uring target in interface but not this target not found
       # "-DUSERVER_FEATURE_ROCKS=ON"
       # # ydb disable for now due to i don't work on its building for a while
