@@ -41,7 +41,7 @@
      include(SetupGTest)
 
      if(USERVER_FEATURE_GRPC)
-    +    set(USERVER_GOOGLE_COMMON_PROTOS "some" CACHE INTERNAL "" FORCE)
+    +    set(USERVER_GOOGLE_COMMON_PROTOS ${api-common-protos} CACHE INTERNAL "" FORCE)
          include(SetupProtobuf)
      endif()
   '';
