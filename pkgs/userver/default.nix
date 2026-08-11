@@ -34,15 +34,16 @@
   };
   grpc-api-common-proto-patch = pkgs.writeText "api-common-protos.patch" ''
     diff --git a/CMakeLists.txt b/CMakeLists.txt
-    index 5099af5..e547775 100644
+    index 5099af5..41877d4 100644
     --- a/CMakeLists.txt
     +++ b/CMakeLists.txt
-    @@ -1,4 +1,5 @@
-      cmake_minimum_required(VERSION 3.14...4.0)
-    +set(USERVER_GOOGLE_COMMON_PROTOS "${api-common-protos}" CACHE INTERNAL "" FORCE)
-      if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0")
-          if(NOT DEFINED $CACHE{CMAKE_POLICY_VERSION_MINIMUM})
-              set(CMAKE_POLICY_VERSION_MINIMUM
+    @@ -237,6 +237,7 @@ include(SetupBoost)
+     include(SetupGTest)
+
+     if(USERVER_FEATURE_GRPC)
+    +    set(USERVER_GOOGLE_COMMON_PROTOS "some" CACHE INTERNAL "" FORCE)
+         include(SetupProtobuf)
+     endif()
   '';
 in
   stdenv.mkDerivation {
