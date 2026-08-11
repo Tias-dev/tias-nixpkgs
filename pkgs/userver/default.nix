@@ -32,19 +32,7 @@
     rev = "3332dec527759859840a3a2ff108c67a54708130";
     hash = "sha256-GeWNBzT0lRncT+fz+TlEfp+J4FqmzuHwVhYxMN6e3FU";
   };
-  grpc-api-common-proto-patch = pkgs.writeText "api-common-protos.patch" ''
-    diff --git a/CMakeLists.txt b/CMakeLists.txt
-    index 5099af5..41877d4 100644
-    --- a/CMakeLists.txt
-    +++ b/CMakeLists.txt
-    @@ -237,6 +237,7 @@ include(SetupBoost)
-     include(SetupGTest)
-
-     if(USERVER_FEATURE_GRPC)
-    +    set(USERVER_GOOGLE_COMMON_PROTOS ${api-common-protos} CACHE INTERNAL "" FORCE)
-         include(SetupProtobuf)
-     endif()
-  '';
+  grpc-api-common-proto-patch = pkgs.callPackage ./grpc-api-common-proto-patch.nix {inherit api-common-protos;};
 in
   stdenv.mkDerivation {
     pname = "userver-lib";
@@ -60,8 +48,9 @@ in
       ./mysql.patch
 
       # Force virtualenv to use packages from buildInputs
+      # and disable CPM downloading
       # as we dont need(and we can't) to download smth
-      ./python.patch
+      ./no-download.patch
 
       ./grpc.patch
       "${grpc-api-common-proto-patch}"
@@ -72,11 +61,6 @@ in
         [
           # Required
           "-DUSERVER_INSTALL=ON"
-
-          # All packages installed by buildInputs
-          # so we dont need(and we can't) to download smth
-          "-DUSERVER_DOWNLOAD_PACKAGES=OFF"
-          "-DUSERVER_CHECK_PACKAGE_VERSIONS=0"
 
           # boost_stacktrace_backtrace is not provided by boost186 build input
           # TODO: create custom boost package with boost_stacktrace_backtrace support
