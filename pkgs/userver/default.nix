@@ -5,6 +5,7 @@
   callPackage,
   stdenv,
   fetchFromGitHub,
+  python3Packages,
   # features
   withAllComponents ? false,
   withRedis ? false,
@@ -138,11 +139,9 @@ in
         grpc
         abseil-cpp
 
-        (pkgs.python313.withPackages
-          (pythonPkgs:
-            with pythonPkgs;
+        (
+            with python3Packages;
             with customPythonPackages; [
-              wheel
               pip
               virtualenv
 
@@ -199,7 +198,7 @@ in
 
               wheel
               packaging
-            ]))
+            ])
       ]
       ++ (lib.optional (withAllComponents || withRedis) hiredis)
       ++ (lib.optional (withAllComponents || withClickhouse) clickhouse-cpp)
