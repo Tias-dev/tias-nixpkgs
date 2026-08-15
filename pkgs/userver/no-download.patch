@@ -1,16 +1,41 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 5099af5..7993226 100644
+index 5099af5..8e5b5b3 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1,4 +1,10 @@
- cmake_minimum_required(VERSION 3.14...4.0)
-+
-+set(USERVER_PIP_USE_SYSTEM_PACKAGES ON CACHE INTERNAL "" FORCE)
-+set(USERVER_PIP_OPTIONS --no-index CACHE INTERNAL "" FORCE)
-+set(USERVER_DOWNLOAD_PACKAGES OFF CACHE INTERNAL "" FORCE)
-+set(USERVER_CHECK_PACKAGE_VERSIONS OFF CACHE INTERNAL "" FORCE)
-+
- if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0")
-     if(NOT DEFINED $CACHE{CMAKE_POLICY_VERSION_MINIMUM})
-         set(CMAKE_POLICY_VERSION_MINIMUM
+@@ -99,7 +99,7 @@ endif()
+ option(USERVER_CONAN "Build with Conan packages" "${CONAN_EXPORTED}")
+ 
+ # @ingroup download
+-option(USERVER_DOWNLOAD_PACKAGES "Download missing third party packages and use the downloaded versions" ON)
++option(USERVER_DOWNLOAD_PACKAGES "Download missing third party packages and use the downloaded versions" OFF)
+ # @ingroup download
+ option(USERVER_FORCE_DOWNLOAD_PACKAGES
+        "Download all possible third party packages even if a system package is available" OFF
+@@ -140,7 +140,7 @@ endif()
+ # @ingroup some_platforms
+ option(USERVER_DISABLE_RSEQ_ACCELERATION "Disable rseq-based optimizations" ${USERVER_DISABLE_RSEQ_DEFAULT})
+ 
+-option(USERVER_CHECK_PACKAGE_VERSIONS "Check package versions" ON)
++option(USERVER_CHECK_PACKAGE_VERSIONS "Check package versions" OFF)
+ 
+ # @ingroup libraries
+ option(USERVER_FEATURE_MONGODB "Provide asynchronous driver for MongoDB" "${USERVER_MONGODB_DEFAULT}")
+diff --git a/cmake/UserverVenv.cmake b/cmake/UserverVenv.cmake
+index ad36999..c267de5 100644
+--- a/cmake/UserverVenv.cmake
++++ b/cmake/UserverVenv.cmake
+@@ -19,11 +19,11 @@ function(_userver_prepare_venv_variables)
+     )
+     message(STATUS "Python: ${USERVER_PYTHON_PATH}")
+     # @ingroup compilation
+-    option(USERVER_PIP_USE_SYSTEM_PACKAGES "Use system python packages inside venv" OFF)
++    option(USERVER_PIP_USE_SYSTEM_PACKAGES "Use system python packages inside venv" ON)
+ 
+     # @ingroup dependencies
+     set(USERVER_PIP_OPTIONS
+-        ""
++        "--no-index"
+         CACHE STRING "Options for all pip calls"
+     )
+ endfunction()
 
