@@ -5,7 +5,6 @@
   callPackage,
   stdenv,
   fetchFromGitHub,
-  python3Packages,
   # features
   withAllComponents ? false,
   withRedis ? false,
@@ -134,6 +133,7 @@ in
         c-ares
         curl
         clang-tools
+        libsodium
 
         protobuf
         grpc
