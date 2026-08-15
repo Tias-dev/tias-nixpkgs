@@ -22,7 +22,7 @@
 }: let
   clickhouse-cpp = callPackage ./clickhouse-cpp.nix {};
   new-pkgs = inputs'.new-nixpkgs.legacyPackages;
-  customPythonPackages = callPackage ./pythonLibs.nix {};
+  customPythonPackages = ( callPackage ./pythonLibs.nix {} ).pythonEnvWithAllIncluded;
   updatedPackages = {
     postgresql = new-pkgs.postgresql.overrideAttrs (_: _: {dontDisableStatic = true;});
     libpq = new-pkgs.libpq.overrideAttrs (_: _: {dontDisableStatic = true;});
@@ -138,68 +138,9 @@ in
         protobuf
         grpc
         abseil-cpp
+
+        customPythonPackages
       ]
-      ++ (
-        with python3Packages;
-        with customPythonPackages; [
-          pip
-          virtualenv
-
-          # chaotic requirements
-          jinja2
-          transliterate
-          pydantic
-          pyyaml
-
-          # cmake2md
-          tree-sitter
-          tree-sitter-grammars.tree-sitter-cmake
-
-          # pylint
-          pylint
-
-          # sql
-          # jinja2
-
-          # testsuite
-          requests
-          websockets_12_0
-          pytest
-          zstd
-          yandex-taxi-testsuite
-          clickhouse-driver
-          python-redis
-          pymysql
-          aio-pika
-          aiokafka
-
-          # mongodb
-          pymongo
-
-          # grpc
-          # There protobuf 6 by default but can be set protobuf(4/5/6) or all of them
-          protobuf6
-          grpcio
-          grpcio-tools
-          grpcio-reflection
-
-          # redis
-          redis
-
-          # postgres
-          yandex-pgmigrate
-
-          # ydb
-          ydb
-
-          # yandex internal tests
-          httpx
-          h2
-
-          wheel
-          packaging
-        ]
-      )
       ++ (lib.optional (withAllComponents || withRedis) hiredis)
       ++ (lib.optional (withAllComponents || withClickhouse) clickhouse-cpp)
       ++ (lib.optionals (withAllComponents || withKafka) [lz4 cyrus_sasl rdkafka])

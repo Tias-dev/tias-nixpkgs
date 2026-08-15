@@ -1,10 +1,10 @@
 {
   lib,
   fetchPypi,
-  python313Packages,
+  python3Packages,
+  pkgs
 }: let
-  pythonPackages = python313Packages;
-  buildPythonPackage = pythonPackages.buildPythonPackage;
+  buildPythonPackage = python3Packages.buildPythonPackage;
 in rec {
   pytest-runner = let
     pname = "pytest-runner";
@@ -17,7 +17,7 @@ in rec {
         sha256 = "cNRzlYWnAI83v0kzwBP9sye4h4paafy7MxbIiILw9Js=";
       };
       pyproject = true;
-      build-system = with pythonPackages; [setuptools-scm];
+      build-system = with python3Packages; [setuptools-scm];
     };
 
   yandex-taxi-testsuite = let
@@ -32,8 +32,8 @@ in rec {
         sha256 = "OrTvWO6I2ghCdL79XsUUY8E/vg8H6bwUmk5PnwPF3Ok=";
       };
       pyproject = true;
-      build-system = with pythonPackages; [setuptools];
-      propagatedBuildInputs = with pythonPackages; [
+      build-system = with python3Packages; [setuptools];
+      propagatedBuildInputs = with python3Packages; [
         pytest-runner
         pyyaml
         aiohttp
@@ -57,8 +57,8 @@ in rec {
         sha256 = "vGCODUjmh9ucKx1+p8OBr+DRhJytIWCH2OA9jQalfIU=";
       };
       pyproject = true;
-      build-system = with pythonPackages; [setuptools];
-      propagatedBuildInputs = with pythonPackages; [
+      build-system = with python3Packages; [setuptools];
+      propagatedBuildInputs = with python3Packages; [
         six
       ];
     };
@@ -71,7 +71,7 @@ in rec {
       sha256 = "gd+cvLtsJg3h4AfljAEb/r4tr8hDUQewU385PdOMixs=";
     };
     pyproject = true;
-    build-system = [pythonPackages.setuptools-scm];
+    build-system = [python3Packages.setuptools-scm];
   };
   sqlparse_5_5 = buildPythonPackage rec {
     pname = "sqlparse";
@@ -81,9 +81,9 @@ in rec {
       sha256 = "4g1KmwuFhf32OxDTAGbHyUxden7EfIiaLYOjyqk/8o4=";
     };
     pyproject = true;
-    build-system = [pythonPackages.setuptools-scm];
+    build-system = [python3Packages.setuptools-scm];
     nativeBuildInputs = [
-      pythonPackages.hatchling
+      python3Packages.hatchling
     ];
   };
 
@@ -96,8 +96,8 @@ in rec {
       sha256 = "EKup9QjDGbMivYDkd1I2cB7C7Lvu6bQMbuIid6yjWRo=";
     };
     pyproject = true;
-    build-system = [pythonPackages.setuptools-scm];
-    propagatedBuildInputs = with pythonPackages; [
+    build-system = [python3Packages.setuptools-scm];
+    propagatedBuildInputs = with python3Packages; [
       sqlparse_5_5
       psycopg2
       pyyaml
@@ -112,8 +112,8 @@ in rec {
       sha256 = "migkkH/G+O6F81DFwJ1yeCJlKTgxfdb+PW/1f4e9J54=";
     };
     pyproject = true;
-    build-system = [pythonPackages.setuptools-scm];
-    propagatedBuildInputs = with pythonPackages; [
+    build-system = [python3Packages.setuptools-scm];
+    propagatedBuildInputs = with python3Packages; [
       protobuf6
       grpcio
       aiohttp
@@ -129,7 +129,69 @@ in rec {
       sha256 = "7nEG/MLKAUOOvh+Mnq3gtHDNwAj3pmRrNQLjHT7sB1I=";
     };
     pyproject = true;
-    build-system = [pythonPackages.setuptools-scm];
-    propagatedBuildInputs = with pythonPackages; [crc];
+    build-system = [python3Packages.setuptools-scm];
+    propagatedBuildInputs = with python3Packages; [crc];
   };
+
+  pythonEnvWithAllIncluded =
+    pkgs.python3.withPackages
+    (pythonPackages:
+      with pythonPackages; [
+        pip
+        virtualenv
+
+        # chaotic requirements
+        jinja2
+        transliterate
+        pydantic
+        pyyaml
+
+        # cmake2md
+        tree-sitter
+        tree-sitter-grammars.tree-sitter-cmake
+
+        # pylint
+        pylint
+
+        # sql
+        # jinja2
+
+        # testsuite
+        requests
+        websockets_12_0
+        pytest
+        zstd
+        yandex-taxi-testsuite
+        clickhouse-driver
+        python-redis
+        pymysql
+        aio-pika
+        aiokafka
+
+        # mongodb
+        pymongo
+
+        # grpc
+        # There protobuf 6 by default but can be set protobuf(4/5/6) or all of them
+        protobuf6
+        grpcio
+        grpcio-tools
+        grpcio-reflection
+
+        # redis
+        redis
+
+        # postgres
+        yandex-pgmigrate
+
+        # ydb
+        ydb
+
+        # yandex internal tests
+        httpx
+        h2
+
+        wheel
+        packaging
+      ]);
 }
