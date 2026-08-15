@@ -142,6 +142,7 @@ in
           (pythonPkgs:
             with pythonPkgs;
             with customPythonPackages; [
+              wheel
               pip
               virtualenv
 
