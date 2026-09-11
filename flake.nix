@@ -2,9 +2,9 @@
   description = "Nix packages that i manage";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    new-nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    crane.url = "github:ipetkov/crane";
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -15,11 +15,18 @@
         pkgs,
         inputs',
         ...
-      }: {
-        packages.harpoon-bufferline = pkgs.callPackage ./pkgs/harpoon-bufferline.nix {};
-        packages.xkbswitch = pkgs.callPackage ./pkgs/xkbswitch.nix {};
-        packages.userver = pkgs.callPackage ./pkgs/userver {inherit inputs';};
-        packages.userver-python = (pkgs.callPackage ./pkgs/userver/pythonLibs.nix {}).pythonEnvWithAllIncluded;
+      }: let
+        inherit (pkgs) callPackage;
+        craneLib = inputs.crane.mkLib pkgs;
+      in {
+        packages = {
+          harpoon-bufferline = callPackage ./pkgs/harpoon-bufferline.nix {};
+          xkbswitch = callPackage ./pkgs/xkbswitch.nix {};
+          userver = callPackage ./pkgs/userver {inherit inputs';};
+          userver-python = (callPackage ./pkgs/userver/pythonLibs.nix {}).pythonEnvWithAllIncluded;
+          linux-broadcast = callPackage ./pkgs/linux-broadcast.nix {inherit craneLib;};
+          obs-face-tracker = callPackage ./pkgs/obs-face-tracker.nix {};
+        };
       };
     };
 }
