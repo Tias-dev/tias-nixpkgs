@@ -21,12 +21,7 @@ stdenv.mkDerivation rec {
     fetchSubmodules = true;
   };
 
-  cmakeFlags = [
-    "-DWITH_DLIB_SUBMODULE=OFF"
-  ];
-
   nativeBuildInputs = [
-    # pkg-config
     dlib
     cmake
     qt5.qtbase
@@ -38,6 +33,17 @@ stdenv.mkDerivation rec {
     obs-studio
     libx11
   ];
+
+  cmakeFlags = [
+    "-DWITH_DLIB_SUBMODULE=OFF"
+  ];
+
+  postFixup = ''
+    mkdir -p $out/lib $out/share/obs/obs-plugins
+    mv $out/obs-plugins/64bit $out/lib/obs-plugins
+    mv $out/data/obs-plugins/* $out/share/obs/obs-plugins/
+    rm -rf $out/obs-plugins $out/data
+  '';
 
   meta = {
     description = "Obs plugin for capture face on webcam";
