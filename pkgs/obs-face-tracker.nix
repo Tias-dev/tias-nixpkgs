@@ -8,47 +8,59 @@
   obs-studio,
   libx11,
   fetchFromGitHub,
-}:
-stdenv.mkDerivation rec {
-  pname = "obs-face-tracker";
-  version = "0.9.1";
-
-  src = fetchFromGitHub {
-    owner = "norihiro";
-    repo = pname;
-    tag = version;
-    sha256 = "mlbzuXcXyw3DVPKl0sZZfLNXj9plF4pYQg+DGzKqTxw=";
-    fetchSubmodules = true;
+  fetchurl,
+  bzip2,
+}: let
+  model = fetchurl {
+    url = "https://github.com/davisking/dlib-models/raw/refs/heads/master/mmod_human_face_detector.dat.bz2";
+    hash = "sha256-256eQPCSwRjV6z5kOTWyFoOBcHk1WVFVQcVqK1DZ/IQ=";
   };
+in
+  stdenv.mkDerivation rec {
+    pname = "obs-face-tracker";
+    version = "0.9.1";
 
-  nativeBuildInputs = [
-    dlib
-    cmake
-    qt5.qtbase
-    qt5.wrapQtAppsHook
-  ];
+    src = fetchFromGitHub {
+      owner = "norihiro";
+      repo = pname;
+      tag = version;
+      sha256 = "mlbzuXcXyw3DVPKl0sZZfLNXj9plF4pYQg+DGzKqTxw=";
+      fetchSubmodules = true;
+    };
 
-  buildInputs = [
-    wayland
-    obs-studio
-    libx11
-  ];
+    nativeBuildInputs = [
+      dlib
+      cmake
+      qt5.qtbase
+      qt5.wrapQtAppsHook
+    ];
 
-  cmakeFlags = [
-    "-DWITH_DLIB_SUBMODULE=OFF"
-  ];
+    buildInputs = [
+      wayland
+      obs-studio
+      libx11
+    ];
 
-  postFixup = ''
-    mkdir -p $out/lib $out/share/obs/obs-plugins
-    mv $out/obs-plugins/64bit $out/lib/obs-plugins
-    mv $out/data/obs-plugins/* $out/share/obs/obs-plugins/
-    rm -rf $out/obs-plugins $out/data
-  '';
+    cmakeFlags = [
+      "-DWITH_DLIB_SUBMODULE=OFF"
+    ];
 
-  meta = {
-    description = "Obs plugin for capture face on webcam";
-    homepage = "https://github.com/norihiro/obs-face-tracker";
-    license = lib.licenses.gpl3Plus;
-    platforms = lib.platforms.linux;
-  };
-}
+    postBuild = ''
+      mkdir -p $out/data/dlib_cnn_model/
+      ${bzip2}/bin/bunzip2 < ${model} > $out/data/dlib_cnn_model/mmod_human_face_detector.dat
+    '';
+
+    postFixup = ''
+      mkdir -p $out/lib $out/share/obs/obs-plugins
+      mv $out/obs-plugins/64bit $out/lib/obs-plugins
+      mv $out/data/* $out/share/obs/
+      rm -rf $out/obs-plugins $out/data
+    '';
+
+    meta = {
+      description = "Obs plugin for capture face on webcam";
+      homepage = "https://github.com/norihiro/obs-face-tracker";
+      license = lib.licenses.gpl3Plus;
+      platforms = lib.platforms.linux;
+    };
+  }
