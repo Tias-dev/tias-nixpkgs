@@ -46,8 +46,8 @@ in
     ];
 
     postBuild = ''
-      mkdir -p $out/data/dlib_cnn_model/
-      ${bzip2}/bin/bunzip2 < ${model} > $out/data/dlib_cnn_model/mmod_human_face_detector.dat
+      mkdir -p $out/data/obs-plugins/obs-face-tracker/data/dlib_cnn_model/
+      ${bzip2}/bin/bunzip2 < ${model} > $out/data/obs-plugins/obs-face-tracker/data/dlib_cnn_model/mmod_human_face_detector.dat
     '';
 
     postFixup = ''
