@@ -19,18 +19,13 @@
         inherit (pkgs) callPackage;
         craneLib = inputs.crane.mkLib pkgs;
       in {
-        packages = rec {
+        packages = {
           harpoon-bufferline = callPackage ./pkgs/harpoon-bufferline.nix {};
           xkbswitch = callPackage ./pkgs/xkbswitch.nix {};
           userver = callPackage ./pkgs/userver {inherit inputs';};
           userver-python = (callPackage ./pkgs/userver/pythonLibs.nix {}).pythonEnvWithAllIncluded;
           linux-broadcast = callPackage ./pkgs/linux-broadcast.nix {inherit craneLib;};
           obs-face-tracker = callPackage ./pkgs/obs-face-tracker.nix {};
-          obs-wrapped = pkgs.wrapOBS {
-            plugins = [
-              obs-face-tracker
-            ];
-          };
         };
       };
     };
