@@ -43,6 +43,7 @@ in
 
     cmakeFlags = [
       "-DWITH_DLIB_SUBMODULE=OFF"
+      "-DWITH_DOCK=OFF"
     ];
 
     postBuild = ''
