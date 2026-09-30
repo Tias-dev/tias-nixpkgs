@@ -5,6 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
     crane.url = "github:ipetkov/crane";
+    harpoon-bufferline.url = "github:Tias-dev/harpoon-bufferline.nvim";
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -20,7 +21,7 @@
         craneLib = inputs.crane.mkLib pkgs;
       in {
         packages = {
-          harpoon-bufferline = callPackage ./pkgs/harpoon-bufferline.nix {};
+          harpoon-bufferline = inputs'.harpoon-bufferline.packages.default;
           xkbswitch = callPackage ./pkgs/xkbswitch.nix {};
           userver = callPackage ./pkgs/userver {inherit inputs';};
           userver-python = (callPackage ./pkgs/userver/pythonLibs.nix {}).pythonEnvWithAllIncluded;
