@@ -9,11 +9,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1791361575,
-        "narHash": "sha256-82jGKmgZcXxGp8B7/nCPW0cp2FIFEwcjxsataScF8Zw=",
+        "lastModified": 1791361870,
+        "narHash": "sha256-osUALK5R81+0z2fjfnSFjFe81gTMXWQ7IPgx3MqT6ek=",
         "owner": "Tias-dev",
         "repo": "arcsigns",
-        "rev": "52207b3fe6224128feeb847c4af37026f2992d66",
+        "rev": "95d19906d09008c0f728cb91fc19449231b19f38",
         "type": "github"
       },
       "original": {
