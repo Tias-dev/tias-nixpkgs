@@ -4,8 +4,18 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    harpoon-bufferline.url = "github:Tias-dev/harpoon-bufferline.nvim";
-    arcsigns.url = "github:Tias-dev/arcsigns";
+    harpoon-bufferline = {
+      url = "github:Tias-dev/harpoon-bufferline.nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    arcsigns = {
+      url = "github:Tias-dev/arcsigns";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    ost-toolkit = {
+      url = "github:Tias-dev/ost-compiler";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -18,15 +28,14 @@
         ...
       }: let
         inherit (pkgs) callPackage;
-        craneLib = inputs.crane.mkLib pkgs;
       in {
         packages = {
           harpoon-bufferline = inputs'.harpoon-bufferline.packages.default;
           arcsigns = inputs'.arcsigns.packages.default;
+          ost-toolkit = inputs'.ost-toolkit.packages.default;
           xkbswitch = callPackage ./pkgs/xkbswitch.nix {};
           userver = callPackage ./pkgs/userver {inherit inputs';};
           userver-python = (callPackage ./pkgs/userver/pythonLibs.nix {}).pythonEnvWithAllIncluded;
-          linux-broadcast = callPackage ./pkgs/linux-broadcast.nix {inherit craneLib;};
           obs-face-tracker = callPackage ./pkgs/obs-face-tracker.nix {};
         };
       };
