@@ -235,11 +235,11 @@
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
-        "lastModified": 1791553813,
-        "narHash": "sha256-qMYK1UjOMCPY1Dt47qCvnyTCLV8wxyN20b9YZWX/jvk=",
+        "lastModified": 1791717210,
+        "narHash": "sha256-7ow+wbQj4abI9063pP2NLugrfEWK7VOEyMXLF4MD8ZQ=",
         "owner": "Tias-dev",
         "repo": "ost-compiler",
-        "rev": "640ebb653bcc84592d14b66ac56f27088945cba4",
+        "rev": "7bc237e900200bff28a615d91b1c89eb926297d3",
         "type": "github"
       },
       "original": {
