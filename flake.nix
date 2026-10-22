@@ -16,6 +16,9 @@
       url = "github:Tias-dev/ost-compiler";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    frontend-labs = {
+      url = "git+https://github.com/Tias-dev/frontend-labs.git?lfs=1";
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -37,6 +40,8 @@
           userver = callPackage ./pkgs/userver {inherit inputs';};
           userver-python = (callPackage ./pkgs/userver/pythonLibs.nix {}).pythonEnvWithAllIncluded;
           obs-face-tracker = callPackage ./pkgs/obs-face-tracker.nix {};
+
+          frontend-labs_simple-site = inputs'.frontend-labs.packages.simple-site;
         };
       };
     };
