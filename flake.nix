@@ -20,6 +20,10 @@
       url = "github:Tias-dev/VTM";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    YAD-Studio = {
+      url = "github:Tias-dev/YAD-Studio";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     frontend-labs = {
       url = "git+https://github.com/Tias-dev/frontend-labs.git?lfs=1";
     };
@@ -41,6 +45,7 @@
           arcsigns = inputs'.arcsigns.packages.default;
           ost-toolkit = inputs'.ost-toolkit.packages.default;
           VTM = inputs'.VTM.packages.default;
+          YAD-Studio = inputs'.YAD-Studio.packages.default;
 
           xkbswitch = callPackage ./pkgs/xkbswitch.nix {};
           userver = callPackage ./pkgs/userver {inherit inputs';};
