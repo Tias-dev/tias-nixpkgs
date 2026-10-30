@@ -51,6 +51,7 @@
           userver = callPackage ./pkgs/userver {inherit inputs';};
           userver-python = (callPackage ./pkgs/userver/pythonLibs.nix {}).pythonEnvWithAllIncluded;
           obs-face-tracker = callPackage ./pkgs/obs-face-tracker.nix {};
+          kotlin-lsp = callPackage ./pkgs/kotlin-lsp.nix {};
 
           frontend-labs_simple-site = inputs'.frontend-labs.packages.simple-site;
         };
