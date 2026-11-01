@@ -13,11 +13,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1793191399,
-        "narHash": "sha256-/LWGCEAIY9nx/5pnTZIkc1eq+I+wZe3eXWCRxVXXZe4=",
+        "lastModified": 1793538736,
+        "narHash": "sha256-Xly6ec79prLTj1ccJjtHZdUxqzR2NAbAof/U4vkK/J0=",
         "owner": "Tias-dev",
         "repo": "VTM",
-        "rev": "3e2b02338b4be11bbd0bee0c723882cc9dcc6992",
+        "rev": "dca138a18a1d1da16f6b2afa6063f2a500ff26d9",
         "type": "github"
       },
       "original": {
