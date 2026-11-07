@@ -40,11 +40,11 @@
         "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
-        "lastModified": 1794053486,
-        "narHash": "sha256-wQDXXcRUikURGawBrf4J496fuDYR83ey1S+zQXqQLjk=",
+        "lastModified": 1794054007,
+        "narHash": "sha256-JlIIZEr0tqEOXWzRMJ8Nqw+2gFxk8KLwiVqfjQF//kE=",
         "owner": "Tias-dev",
         "repo": "YAD-Studio",
-        "rev": "6723aaa66040092fe2ffdbe3d1227a75875ac806",
+        "rev": "83c7959e019e037c972e9a9efdb6dd2f126a2a27",
         "type": "github"
       },
       "original": {
