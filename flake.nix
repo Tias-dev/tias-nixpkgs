@@ -54,6 +54,7 @@
           kotlin-lsp = callPackage ./pkgs/kotlin-lsp.nix {};
 
           frontend-labs_simple-site = inputs'.frontend-labs.packages.simple-site;
+          frontend-labs_dashboard-site = inputs'.frontend-labs.packages.dashboard-site;
         };
       };
     };

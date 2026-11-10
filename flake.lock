@@ -674,12 +674,12 @@
         "treefmt-nix": "treefmt-nix_9"
       },
       "locked": {
-        "lastModified": 1792704631,
+        "lastModified": 1794325843,
         "lfs": true,
-        "narHash": "sha256-7o1+5WNmMtlMatzOv+lFSbpV+MIrKw2aDBCjBm3jg9o=",
+        "narHash": "sha256-TXl3LAtg/r2X5Dm1G/1VK03cEJdqD52LDASyHlHYoiY=",
         "ref": "refs/heads/trunk",
-        "rev": "08eb7ce59aafeb433e76f0743955a2d3192579b8",
-        "revCount": 4,
+        "rev": "2a99ccb025ec09f8e0cd20ba457109e9c1640159",
+        "revCount": 20,
         "type": "git",
         "url": "https://github.com/Tias-dev/frontend-labs.git"
       },
